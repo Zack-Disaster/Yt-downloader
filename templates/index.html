@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YT Downloader</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0f0f0f; color: white; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.container { background: #1a1a1a; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px; }
+h1 { text-align: center; color: #ff0000; margin-bottom: 20px; }
+input { width: 100%; padding: 12px; border-radius: 8px; border: none; margin-bottom: 15px; font-size: 16px; background: #2a2a2a; color: white; }
+.buttons { display: flex; gap: 10px; }
+button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+.mp4 { background: #ff0000; color: white; }
+.mp3 { background: #1db954; color: white; }
+#status { margin-top: 15px; text-align: center; color: #aaa; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎬 YT Downloader</h1>
+  <input type="text" id="url" placeholder="YouTube URL paste karo...">
+  <div class="buttons">
+    <button class="mp4" onclick="download('mp4')">⬇️ MP4 Video</button>
+    <button class="mp3" onclick="download('mp3')">🎵 MP3 Audio</button>
+  </div>
+  <p id="status"></p>
+</div>
+<script>
+async function download(format) {
+  const url = document.getElementById('url').value;
+  if (!url) { alert('URL daalo pehle!'); return; }
+  document.getElementById('status').innerText = 'Downloading... please wait ⏳';
+  try {
+    const res = await fetch('/download', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({url, format})
+    });
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'video.' + format;
+    a.click();
+    document.getElementById('status').innerText = 'Download complete! ✅';
+  } catch(e) {
+    document.getElementById('status').innerText = 'Error aaya, dobara try karo ❌';
+  }
+}
+</script>
+</body>
+</html>
